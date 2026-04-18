@@ -1,0 +1,376 @@
+{% extends "base.html" %}
+
+{% block title %}Security Events - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+            <div>
+                <h1 class="text-4xl font-bold text-white flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-600 rounded-lg flex items-center justify-center">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <span>Security Events</span>
+                </h1>
+                <p class="text-white/60 mt-2">Cross-Account Protection monitoring and OAuth token management</p>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="location.reload()" class="glass-dark px-4 py-2 rounded-lg text-white border border-white/20 hover:bg-white/10 transition-all">
+                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Refresh
+                </button>
+                <a href="/admin/dashboard" class="glass-dark px-4 py-2 rounded-lg text-white border border-white/20 hover:bg-white/10 transition-all">
+                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Security Events Card -->
+        <div class="glass-dark rounded-xl p-6 border border-red-500/30 hover:border-red-500/50 transition-all">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-red-400 text-xs font-semibold uppercase tracking-wider mb-2">Security Events (24h)</p>
+                    <p class="text-3xl font-bold text-white">{{ stats.events_24h }}</p>
+                </div>
+                <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expiring Tokens Card -->
+        <div class="glass-dark rounded-xl p-6 border border-yellow-500/30 hover:border-yellow-500/50 transition-all">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-yellow-400 text-xs font-semibold uppercase tracking-wider mb-2">Tokens Expiring Soon</p>
+                    <p class="text-3xl font-bold text-white">{{ stats.expiring_soon }}</p>
+                </div>
+                <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disconnected Accounts Card -->
+        <div class="glass-dark rounded-xl p-6 border border-red-500/30 hover:border-red-500/50 transition-all">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-red-400 text-xs font-semibold uppercase tracking-wider mb-2">Disconnected Accounts</p>
+                    <p class="text-3xl font-bold text-white">{{ stats.disconnected }}</p>
+                </div>
+                <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-rose-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reauth Requests Card -->
+        <div class="glass-dark rounded-xl p-6 border border-blue-500/30 hover:border-blue-500/50 transition-all">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-blue-400 text-xs font-semibold uppercase tracking-wider mb-2">Reauth Requests</p>
+                    <p class="text-3xl font-bold text-white">{{ stats.reauth_pending }}</p>
+                </div>
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CAP Setup Status -->
+    <div class="glass-dark rounded-xl p-6 border border-white/20 mb-8">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-white">Cross-Account Protection Setup</h2>
+            <span class="px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs font-semibold rounded-full">Google RISC</span>
+        </div>
+        
+        <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-6 mb-6">
+            <div class="flex items-start space-x-3">
+                <svg class="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <div class="text-white/90">
+                    <h6 class="font-semibold text-white mb-3">Setup Instructions</h6>
+                    <p class="mb-3">To enable automatic token revocation detection:</p>
+                    <ol class="list-decimal list-inside space-y-2 text-sm">
+                        <li>Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" class="text-blue-400 hover:text-blue-300 underline">Google Cloud Console - Credentials</a></li>
+                        <li>Edit your OAuth 2.0 Client ID</li>
+                        <li>Add this webhook URL: <code class="px-2 py-1 bg-black/30 rounded text-xs">{{ base_url }}/auth/api/security-events</code></li>
+                        <li>Enable RISC (Risk and Identity Signal Coordination)</li>
+                        <li>Save and test by clicking "Test Event" in Google Console</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-white/80 font-semibold mb-2">Webhook URL:</label>
+                <div class="flex items-center space-x-2">
+                    <input type="text" class="flex-1 bg-black/30 border border-white/20 rounded-lg px-4 py-2 text-white text-sm" value="{{ base_url }}/auth/api/security-events" readonly>
+                    <button onclick="copyToClipboard('{{ base_url }}/auth/api/security-events')" class="glass-dark px-4 py-2 rounded-lg text-white border border-white/20 hover:bg-white/10 transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div>
+                <label class="block text-white/80 font-semibold mb-2">Supported Event Types:</label>
+                <div class="space-y-1 text-sm text-white/70">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+                        <span>Token Revoked</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 rounded-full bg-yellow-500"></div>
+                        <span>Account Disabled</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 rounded-full bg-orange-500"></div>
+                        <span>Sessions Revoked</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                        <span>Credential Change</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Security Events -->
+    <div class="glass-dark rounded-xl p-6 border border-white/20 mb-8">
+        <h2 class="text-2xl font-bold text-white mb-6">Recent Security Events</h2>
+        {% if security_events %}
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b border-white/10">
+                        <th class="text-left py-3 px-4 text-white/60 text-xs font-semibold uppercase tracking-wider">Time</th>
+                        <th class="text-left py-3 px-4 text-white/60 text-xs font-semibold uppercase tracking-wider">Type</th>
+                        <th class="text-left py-3 px-4 text-white/60 text-xs font-semibold uppercase tracking-wider">Email</th>
+                        <th class="text-left py-3 px-4 text-white/60 text-xs font-semibold uppercase tracking-wider">Impact</th>
+                        <th class="text-left py-3 px-4 text-white/60 text-xs font-semibold uppercase tracking-wider">Action</th>
+                        <th class="text-left py-3 px-4 text-white/60 text-xs font-semibold uppercase tracking-wider">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="text-white/90">
+                    {% for event in security_events %}
+                    <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                        <td class="py-3 px-4 text-sm">
+                            {{ event.received_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                        </td>
+                        <td class="py-3 px-4">
+                            {% if event.event_type.value == 'token_revoked' %}
+                            <span class="px-2 py-1 bg-red-500/20 border border-red-500/30 text-red-400 text-xs rounded-full">Token Revoked</span>
+                            {% elif event.event_type.value == 'credential_change' %}
+                            <span class="px-2 py-1 bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 text-xs rounded-full">Credential Change</span>
+                            {% else %}
+                            <span class="px-2 py-1 bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs rounded-full">{{ event.event_type.value.replace('_', ' ').title() }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-4 text-sm">{{ event.subject_email }}</td>
+                        <td class="py-3 px-4 text-sm">
+                            {% if event.user_inboxes_affected > 0 %}
+                            <span class="text-blue-400">{{ event.user_inboxes_affected }} inbox(es)</span>
+                            {% endif %}
+                            {% if event.bot_emails_affected > 0 %}
+                            <span class="text-yellow-400">{{ event.bot_emails_affected }} bot(s)</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-4 text-xs text-white/60">{{ event.action_taken[:50] }}...</td>
+                        <td class="py-3 px-4">
+                            {% if event.reauthentication_required %}
+                            <span class="px-2 py-1 bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 text-xs rounded-full">Reauth Required</span>
+                            {% else %}
+                            <span class="px-2 py-1 bg-green-500/20 border border-green-500/30 text-green-400 text-xs rounded-full">Handled</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <svg class="w-16 h-16 mx-auto mb-4 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+            </svg>
+            <p class="text-white/40">No security events recorded</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Tokens Expiring Soon -->
+    <div class="glass-dark rounded-xl p-6 border border-white/20 mb-8">
+        <h2 class="text-2xl font-bold text-white mb-6">OAuth Tokens Expiring Soon</h2>
+        {% if expiring_tokens %}
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b border-white/10">
+                        <th class="text-left py-3 px-4 text-white/60 text-xs font-semibold uppercase tracking-wider">Type</th>
+                        <th class="text-left py-3 px-4 text-white/60 text-xs font-semibold uppercase tracking-wider">Email</th>
+                        <th class="text-left py-3 px-4 text-white/60 text-xs font-semibold uppercase tracking-wider">Expires At</th>
+                        <th class="text-left py-3 px-4 text-white/60 text-xs font-semibold uppercase tracking-wider">Time Remaining</th>
+                        <th class="text-left py-3 px-4 text-white/60 text-xs font-semibold uppercase tracking-wider">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="text-white/90">
+                    {% for token in expiring_tokens %}
+                    <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                        <td class="py-3 px-4">
+                            {% if token.type == 'bot_email' %}
+                            <span class="px-2 py-1 bg-primary-500/20 border border-primary-500/30 text-primary-400 text-xs rounded-full">Bot Email</span>
+                            {% else %}
+                            <span class="px-2 py-1 bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs rounded-full">User Inbox</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-4 text-sm">{{ token.email }}</td>
+                        <td class="py-3 px-4 text-sm">{{ token.expires_at }}</td>
+                        <td class="py-3 px-4">
+                            {% if token.hours_remaining < 12 %}
+                            <span class="text-red-400 font-semibold">{{ "%.1f"|format(token.hours_remaining) }} hours</span>
+                            {% elif token.hours_remaining < 24 %}
+                            <span class="text-yellow-400 font-semibold">{{ "%.1f"|format(token.hours_remaining) }} hours</span>
+                            {% else %}
+                            <span class="text-blue-400">{{ "%.1f"|format(token.hours_remaining) }} hours</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-4">
+                            <button onclick="refreshToken('{{ token.type }}', {{ token.id }})" class="px-3 py-1.5 bg-gradient-to-r from-yellow-500 to-orange-600 text-white text-xs rounded-lg hover:shadow-lg transition-all">
+                                <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Refresh Now
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <svg class="w-16 h-16 mx-auto mb-4 text-green-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p class="text-white/40">All tokens are valid</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Reauthentication Requests -->
+    <div class="glass-dark rounded-xl p-6 border border-white/20">
+        <h2 class="text-2xl font-bold text-white mb-6">Pending Reauthentication Requests</h2>
+        {% if reauth_requests %}
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b border-white/10">
+                        <th class="text-left py-3 px-4 text-white/60 text-xs font-semibold uppercase tracking-wider">Created</th>
+                        <th class="text-left py-3 px-4 text-white/60 text-xs font-semibold uppercase tracking-wider">Email</th>
+                        <th class="text-left py-3 px-4 text-white/60 text-xs font-semibold uppercase tracking-wider">Type</th>
+                        <th class="text-left py-3 px-4 text-white/60 text-xs font-semibold uppercase tracking-wider">Reason</th>
+                        <th class="text-left py-3 px-4 text-white/60 text-xs font-semibold uppercase tracking-wider">Status</th>
+                        <th class="text-left py-3 px-4 text-white/60 text-xs font-semibold uppercase tracking-wider">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="text-white/90">
+                    {% for req in reauth_requests %}
+                    <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                        <td class="py-3 px-4 text-sm">{{ req.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td class="py-3 px-4 text-sm">{{ req.email_address }}</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 bg-gray-500/20 border border-gray-500/30 text-gray-300 text-xs rounded-full">{{ req.account_type }}</span>
+                        </td>
+                        <td class="py-3 px-4 text-sm text-white/60">{{ req.reason[:50] }}...</td>
+                        <td class="py-3 px-4">
+                            {% if req.status == 'pending' %}
+                            <span class="px-2 py-1 bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 text-xs rounded-full">Pending</span>
+                            {% elif req.status == 'completed' %}
+                            <span class="px-2 py-1 bg-green-500/20 border border-green-500/30 text-green-400 text-xs rounded-full">Completed</span>
+                            {% else %}
+                            <span class="px-2 py-1 bg-red-500/20 border border-red-500/30 text-red-400 text-xs rounded-full">Expired</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-4">
+                            {% if req.reauth_url %}
+                            <a href="{{ req.reauth_url }}" target="_blank" class="px-3 py-1.5 bg-gradient-to-r from-primary-500 to-purple-600 text-white text-xs rounded-lg hover:shadow-lg transition-all inline-flex items-center">
+                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                                </svg>
+                                Reauthenticate
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <svg class="w-16 h-16 mx-auto mb-4 text-green-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p class="text-white/40">No pending reauthentication requests</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Webhook URL copied to clipboard!');
+    });
+}
+
+function refreshToken(type, id) {
+    if (!confirm('Refresh OAuth token for this account?')) return;
+    
+    fetch('/admin/api/security/refresh-token', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ type, id })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Token refreshed successfully!');
+            location.reload();
+        } else {
+            alert('Failed to refresh token: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert('Error refreshing token: ' + error);
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - {{ settings.app_name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="container mx-auto px-4 py-12 max-w-4xl">
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 md:p-12">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-gray-900 mb-2">Terms of Service</h1>
+                <p class="text-gray-600">{{ settings.app_name }}</p>
+                <p class="text-sm text-gray-500 mt-2">Last Updated: January 12, 2026</p>
+            </div>
+
+            <!-- Content -->
+            <div class="prose prose-lg max-w-none">
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">1. Acceptance of Terms</h2>
+                    <p class="text-gray-700 mb-4">
+                        By accessing and using {{ settings.app_name }} ("the Service"), you accept and agree to be bound 
+                        by these Terms of Service. If you do not agree to these terms, please do not use the Service.
+                    </p>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">2. Description of Service</h2>
+                    <p class="text-gray-700 mb-4">
+                        {{ settings.app_name }} is an email warm-up automation service that helps improve email deliverability 
+                        by gradually increasing sending volume and managing email reputation.
+                    </p>
+                    <p class="text-gray-700">The Service includes:</p>
+                    <ul class="list-disc list-inside text-gray-700 mb-4 space-y-2">
+                        <li>Automated email sending campaigns</li>
+                        <li>Gmail OAuth integration</li>
+                        <li>Email deliverability monitoring</li>
+                        <li>Campaign management tools</li>
+                        <li>Performance analytics</li>
+                    </ul>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">3. User Responsibilities</h2>
+                    
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">3.1 Account Security</h3>
+                    <p class="text-gray-700 mb-4">You are responsible for:</p>
+                    <ul class="list-disc list-inside text-gray-700 mb-4 space-y-2">
+                        <li>Maintaining the confidentiality of your account credentials</li>
+                        <li>All activities that occur under your account</li>
+                        <li>Notifying us immediately of any unauthorized access</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">3.2 Acceptable Use</h3>
+                    <p class="text-gray-700 mb-4">You agree NOT to use the Service to:</p>
+                    <ul class="list-disc list-inside text-gray-700 mb-4 space-y-2">
+                        <li>Send spam, unsolicited emails, or violate CAN-SPAM regulations</li>
+                        <li>Distribute malware, viruses, or harmful content</li>
+                        <li>Engage in phishing or fraudulent activities</li>
+                        <li>Violate any applicable laws or regulations</li>
+                        <li>Infringe on intellectual property rights</li>
+                        <li>Harass, abuse, or harm others</li>
+                        <li>Circumvent service limitations or restrictions</li>
+                    </ul>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">4. Gmail Integration</h2>
+                    
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">4.1 OAuth Authorization</h3>
+                    <p class="text-gray-700 mb-4">
+                        By connecting your Gmail account, you authorize us to:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 mb-4 space-y-2">
+                        <li>Send emails on your behalf</li>
+                        <li>Read emails to monitor responses</li>
+                        <li>Modify email labels and move emails from spam</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">4.2 Your Gmail Account</h3>
+                    <p class="text-gray-700 mb-4">
+                        You must own or have explicit permission to use the Gmail accounts you connect to our Service. 
+                        You are solely responsible for compliance with Google's Terms of Service and policies.
+                    </p>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">5. Service Limitations</h2>
+                    
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">5.1 Availability</h3>
+                    <p class="text-gray-700 mb-4">
+                        We strive for high availability but do not guarantee uninterrupted service. We may:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 mb-4 space-y-2">
+                        <li>Perform scheduled maintenance</li>
+                        <li>Experience temporary outages</li>
+                        <li>Modify or discontinue features</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">5.2 Usage Limits</h3>
+                    <p class="text-gray-700 mb-4">
+                        We may impose reasonable limits on:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 mb-4 space-y-2">
+                        <li>Number of emails sent per day</li>
+                        <li>Number of connected accounts</li>
+                        <li>Number of active campaigns</li>
+                        <li>API requests</li>
+                    </ul>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">6. Intellectual Property</h2>
+                    <p class="text-gray-700 mb-4">
+                        The Service, including its code, design, logos, and content, is protected by intellectual property laws. 
+                        You may not:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 mb-4 space-y-2">
+                        <li>Copy, modify, or reverse engineer the Service</li>
+                        <li>Remove copyright or proprietary notices</li>
+                        <li>Use our trademarks without permission</li>
+                        <li>Create derivative works</li>
+                    </ul>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">7. Privacy and Data</h2>
+                    <p class="text-gray-700 mb-4">
+                        Your use of the Service is governed by our 
+                        <a href="/privacy" class="text-blue-600 hover:text-blue-800 underline">Privacy Policy</a>, 
+                        which is incorporated into these Terms by reference.
+                    </p>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">8. Termination</h2>
+                    
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">8.1 By You</h3>
+                    <p class="text-gray-700 mb-4">
+                        You may terminate your account at any time by deleting it from the dashboard.
+                    </p>
+
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">8.2 By Us</h3>
+                    <p class="text-gray-700 mb-4">
+                        We may suspend or terminate your account if you:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 mb-4 space-y-2">
+                        <li>Violate these Terms of Service</li>
+                        <li>Engage in fraudulent activity</li>
+                        <li>Use the Service in a way that harms our infrastructure</li>
+                        <li>Fail to pay applicable fees (if any)</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">8.3 Effect of Termination</h3>
+                    <p class="text-gray-700 mb-4">
+                        Upon termination:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 mb-4 space-y-2">
+                        <li>Your access to the Service will be revoked</li>
+                        <li>Your data will be deleted according to our Privacy Policy</li>
+                        <li>OAuth tokens will be revoked</li>
+                        <li>Active campaigns will be stopped</li>
+                    </ul>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">9. Disclaimers</h2>
+                    
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">9.1 "AS IS" Service</h3>
+                    <p class="text-gray-700 mb-4">
+                        THE SERVICE IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
+                        BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT.
+                    </p>
+
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">9.2 No Guarantee of Results</h3>
+                    <p class="text-gray-700 mb-4">
+                        We do not guarantee that using the Service will improve your email deliverability or achieve 
+                        specific outcomes. Email reputation depends on many factors beyond our control.
+                    </p>
+
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">9.3 Third-Party Services</h3>
+                    <p class="text-gray-700 mb-4">
+                        We are not responsible for Gmail, Google services, or any third-party service availability or performance.
+                    </p>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">10. Limitation of Liability</h2>
+                    <p class="text-gray-700 mb-4">
+                        TO THE MAXIMUM EXTENT PERMITTED BY LAW, WE SHALL NOT BE LIABLE FOR:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 mb-4 space-y-2">
+                        <li>Indirect, incidental, special, consequential, or punitive damages</li>
+                        <li>Loss of profits, revenue, data, or business opportunities</li>
+                        <li>Service interruptions or data loss</li>
+                        <li>Actions of third parties, including Gmail/Google</li>
+                        <li>Unauthorized access to your account</li>
+                    </ul>
+                    <p class="text-gray-700">
+                        Our total liability shall not exceed the amount you paid us in the 12 months preceding the claim.
+                    </p>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">11. Indemnification</h2>
+                    <p class="text-gray-700 mb-4">
+                        You agree to indemnify and hold us harmless from any claims, damages, losses, liabilities, and 
+                        expenses (including legal fees) arising from:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 mb-4 space-y-2">
+                        <li>Your use of the Service</li>
+                        <li>Your violation of these Terms</li>
+                        <li>Your violation of any laws or third-party rights</li>
+                        <li>Content you send through the Service</li>
+                    </ul>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">12. Changes to Terms</h2>
+                    <p class="text-gray-700 mb-4">
+                        We reserve the right to modify these Terms at any time. We will notify you of material changes by:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 mb-4 space-y-2">
+                        <li>Posting updated Terms on this page</li>
+                        <li>Updating the "Last Updated" date</li>
+                        <li>Sending email notification (for significant changes)</li>
+                    </ul>
+                    <p class="text-gray-700">
+                        Your continued use after changes indicates acceptance of the updated Terms.
+                    </p>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">13. Dispute Resolution</h2>
+                    
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">13.1 Informal Resolution</h3>
+                    <p class="text-gray-700 mb-4">
+                        Before filing a claim, please contact us to attempt to resolve the dispute informally.
+                    </p>
+
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">13.2 Arbitration</h3>
+                    <p class="text-gray-700 mb-4">
+                        Any disputes shall be resolved through binding arbitration rather than in court, except for 
+                        small claims court matters or intellectual property disputes.
+                    </p>
+
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">13.3 Class Action Waiver</h3>
+                    <p class="text-gray-700 mb-4">
+                        You agree to resolve disputes individually and waive the right to participate in class actions.
+                    </p>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">14. General Provisions</h2>
+                    
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">14.1 Governing Law</h3>
+                    <p class="text-gray-700 mb-4">
+                        These Terms are governed by and construed in accordance with applicable laws, without regard to 
+                        conflict of law provisions.
+                    </p>
+
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">14.2 Severability</h3>
+                    <p class="text-gray-700 mb-4">
+                        If any provision is found unenforceable, the remaining provisions shall continue in full force.
+                    </p>
+
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">14.3 Entire Agreement</h3>
+                    <p class="text-gray-700 mb-4">
+                        These Terms, along with our Privacy Policy, constitute the entire agreement between you and us.
+                    </p>
+
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">14.4 No Waiver</h3>
+                    <p class="text-gray-700 mb-4">
+                        Our failure to enforce any right or provision does not constitute a waiver of that right.
+                    </p>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">15. Contact Information</h2>
+                    <p class="text-gray-700 mb-4">
+                        For questions about these Terms, please contact us:
+                    </p>
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <p class="text-gray-700"><strong>Email:</strong> legal@email-warmup.com</p>
+                        <p class="text-gray-700"><strong>Service:</strong> {{ settings.app_name }}</p>
+                        <p class="text-gray-700"><strong>Website:</strong> <a href="/" class="text-blue-600 hover:text-blue-800 underline">Homepage</a></p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Footer Links -->
+            <div class="mt-12 pt-8 border-t border-gray-200 text-center space-x-4">
+                <a href="/" class="text-blue-600 hover:text-blue-800 font-medium">← Back to Home</a>
+                <a href="/privacy" class="text-blue-600 hover:text-blue-800 font-medium">Privacy Policy</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

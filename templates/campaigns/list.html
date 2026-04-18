@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Campaigns - {{ settings.app_name }}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen py-12 px-4" x-data="campaignsList()" x-init="loadCampaigns()">
+    <!-- Header -->
+    <div class="max-w-7xl mx-auto mb-12">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-4xl font-bold text-white mb-4">Warm-Up Campaigns</h1>
+                <p class="text-lg text-gray-300">Manage your email warmup campaigns</p>
+            </div>
+            <a href="/campaigns/create" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition-all transform hover:scale-105 shadow-lg">
+                <span class="flex items-center">
+                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Create Campaign
+                </span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Campaigns Grid -->
+    <div class="max-w-7xl mx-auto">
+        <!-- Loading State -->
+        <template x-if="loading">
+            <div class="flex items-center justify-center py-20">
+                <svg class="animate-spin h-12 w-12 text-purple-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
+        </template>
+
+        <!-- Empty State -->
+        <template x-if="!loading && campaigns.length === 0">
+            <div class="text-center py-20">
+                <div class="glass rounded-3xl p-12 max-w-2xl mx-auto">
+                    <svg class="h-24 w-24 text-gray-400 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <h3 class="text-2xl font-bold text-white mb-4">No Campaigns Yet</h3>
+                    <p class="text-gray-300 mb-8">Create your first warmup campaign to start improving your email deliverability</p>
+                    <a href="/campaigns/create" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition-all transform hover:scale-105 shadow-lg">
+                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        Create Your First Campaign
+                    </a>
+                </div>
+            </div>
+        </template>
+
+        <!-- Campaigns Grid -->
+        <template x-if="!loading && campaigns.length > 0">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <template x-for="campaign in campaigns" :key="campaign.id">
+                    <div class="glass rounded-2xl p-6 hover:scale-105 transition-all shadow-lg">
+                        <!-- Campaign Header -->
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center space-x-3 flex-1">
+                                <div class="h-12 w-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-semibold text-white truncate" x-text="campaign.name"></h3>
+                                    <p class="text-sm text-gray-400" x-text="campaign.description || 'No description'"></p>
+                                </div>
+                            </div>
+                            
+                            <!-- Status Badge -->
+                            <span 
+                                :class="{
+                                    'bg-green-500/20 text-green-400': campaign.status === 'RUNNING' || campaign.status === 'active',
+                                    'bg-yellow-500/20 text-yellow-400': campaign.status === 'PAUSED' || campaign.status === 'paused',
+                                    'bg-gray-500/20 text-gray-400': campaign.status === 'DRAFT' || campaign.status === 'draft',
+                                    'bg-red-500/20 text-red-400': campaign.status === 'STOPPED' || campaign.status === 'stopped'
+                                }"
+                                class="px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ml-2"
+                                x-text="(campaign.status || 'DRAFT').toUpperCase()"
+                            ></span>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="mb-6">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-400">Daily Progress</span>
+                                <span class="text-white font-semibold" 
+                                      x-text="Math.round((campaign.current_daily_volume / campaign.target_daily_volume) * 100) + '%'">
+                                </span>
+                            </div>
+                            <div class="w-full bg-gray-700/50 rounded-full h-2.5 overflow-hidden">
+                                <div class="bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 h-2.5 rounded-full transition-all duration-500 ease-out"
+                                     :style="`width: ${Math.min((campaign.current_daily_volume / campaign.target_daily_volume) * 100, 100)}%`">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stats Grid -->
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="bg-white/5 rounded-xl p-4">
+                                <p class="text-gray-400 text-xs mb-1">Current Volume</p>
+                                <p class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent" x-text="campaign.current_daily_volume || 0"></p>
+                                <p class="text-gray-500 text-xs mt-1">emails/day</p>
+                            </div>
+                            <div class="bg-white/5 rounded-xl p-4">
+                                <p class="text-gray-400 text-xs mb-1">Target Volume</p>
+                                <p class="text-2xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent" x-text="campaign.target_daily_volume || 0"></p>
+                                <p class="text-gray-500 text-xs mt-1">emails/day</p>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex gap-2 pt-4 border-t border-white/10">
+                            <a :href="`/campaigns/${campaign.id}`" class="flex-1 text-center py-2.5 px-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg text-white font-medium transition-all transform hover:scale-105 shadow-md">
+                                View Details
+                            </a>
+                            <button @click="deleteCampaign(campaign.id)" 
+                                    class="py-2.5 px-4 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-red-400 transition-all transform hover:scale-105"
+                                    title="Delete campaign">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+    </div>
+</div>
+
+<script>
+function campaignsList() {
+    return {
+        campaigns: [],
+        loading: true,
+
+        async loadCampaigns() {
+            try {
+                const response = await apiFetch('/campaigns/api/list');
+                if (response.ok) {
+                    const data = await response.json();
+                    this.campaigns = data.campaigns || [];
+                } else {
+                    this.campaigns = [];
+                    showToast('Failed to load campaigns', 'error');
+                }
+            } catch (error) {
+                this.campaigns = [];
+                showToast('Failed to load campaigns', 'error');
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async deleteCampaign(campaignId) {
+            if (!confirm('Are you sure you want to delete this campaign? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                await apiFetch(`/campaigns/api/${campaignId}`, {
+                    method: 'DELETE'
+                });
+                showToast('Campaign deleted successfully', 'success');
+                await this.loadCampaigns();
+            } catch (error) {
+                showToast('Failed to delete campaign', 'error');
+            }
+        }
+    }
+}
+</script>
+{% endblock %}

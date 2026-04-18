@@ -1,0 +1,115 @@
+<!-- Security Events Tab Content -->
+<div class="space-y-6">
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Security Events Card -->
+        <div class="glass-dark rounded-xl p-6 border border-red-500/30">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-red-400 text-xs font-semibold uppercase tracking-wider mb-2">Events (24h)</p>
+                    <p class="text-3xl font-bold text-white" x-text="securityStats.events_24h || 0"></p>
+                </div>
+                <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expiring Tokens -->
+        <div class="glass-dark rounded-xl p-6 border border-yellow-500/30">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-yellow-400 text-xs font-semibold uppercase tracking-wider mb-2">Expiring Soon</p>
+                    <p class="text-3xl font-bold text-white" x-text="securityStats.expiring_soon || 0"></p>
+                </div>
+                <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disconnected -->
+        <div class="glass-dark rounded-xl p-6 border border-red-500/30">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-red-400 text-xs font-semibold uppercase tracking-wider mb-2">Disconnected</p>
+                    <p class="text-3xl font-bold text-white" x-text="securityStats.disconnected || 0"></p>
+                </div>
+                <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-rose-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reauth Requests -->
+        <div class="glass-dark rounded-xl p-6 border border-blue-500/30">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-blue-400 text-xs font-semibold uppercase tracking-wider mb-2">Reauth Needed</p>
+                    <p class="text-3xl font-bold text-white" x-text="securityStats.reauth_pending || 0"></p>
+                </div>
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Table -->
+    <div class="glass-dark rounded-xl p-6 border border-white/20">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold text-white">Recent Security Events</h3>
+            <button @click="loadSecurityEvents()" class="glass-dark px-4 py-2 rounded-lg text-white border border-white/20 hover:bg-white/10 transition-all text-sm">
+                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Refresh
+            </button>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b border-white/10">
+                        <th class="text-left py-3 px-4 text-white/60 font-semibold text-sm">Time</th>
+                        <th class="text-left py-3 px-4 text-white/60 font-semibold text-sm">Email</th>
+                        <th class="text-left py-3 px-4 text-white/60 font-semibold text-sm">Event Type</th>
+                        <th class="text-left py-3 px-4 text-white/60 font-semibold text-sm">Description</th>
+                        <th class="text-left py-3 px-4 text-white/60 font-semibold text-sm">Action Taken</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-if="securityEvents.length === 0">
+                        <tr>
+                            <td colspan="5" class="text-center py-8 text-white/60">
+                                <svg class="w-12 h-12 mx-auto mb-4 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                No security events found
+                            </td>
+                        </tr>
+                    </template>
+                    <template x-for="event in securityEvents" :key="event.id">
+                        <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                            <td class="py-3 px-4 text-white/80 text-sm" x-text="new Date(event.created_at).toLocaleString()"></td>
+                            <td class="py-3 px-4 text-white text-sm font-medium" x-text="event.email"></td>
+                            <td class="py-3 px-4">
+                                <span class="px-2 py-1 bg-red-500/20 text-red-400 rounded text-xs font-medium" x-text="event.event_type"></span>
+                            </td>
+                            <td class="py-3 px-4 text-white/80 text-sm" x-text="event.description || '-'"></td>
+                            <td class="py-3 px-4 text-white/80 text-sm" x-text="event.action_taken || 'Marked as disconnected'"></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

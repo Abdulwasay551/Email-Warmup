@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}Login - {{ settings.app_name }}{% endblock %}
+
+{% block body %}
+<div class="min-h-screen flex items-center justify-center gradient-bg py-12 px-4 sm:px-6 lg:px-8">
+    <!-- Back button -->
+    <a href="/" class="fixed top-6 left-6 z-50 flex items-center space-x-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-lg rounded-xl text-white transition-all transform hover:scale-105 shadow-lg">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        <span class="font-medium">Back to Home</span>
+    </a>
+    
+    <!-- Animated background elements -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-1/4 left-1/4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float"></div>
+        <div class="absolute top-1/3 right-1/4 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float" style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-1/4 left-1/3 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float" style="animation-delay: 4s;"></div>
+    </div>
+
+    <div class="max-w-md w-full space-y-8 relative z-10" x-data="loginForm()">
+        <!-- Logo and title -->
+        <div class="text-center">
+            <div class="mx-auto h-20 w-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-xl transform hover:scale-110 transition-transform duration-300">
+                <svg class="h-12 w-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+            </div>
+            <h2 class="mt-6 text-4xl font-extrabold text-white">
+                Welcome Back
+            </h2>
+            <p class="mt-2 text-sm text-gray-400">
+                Sign in to manage your email warm-up campaigns
+            </p>
+        </div>
+
+        <!-- Login form -->
+        <div class="glass-dark rounded-3xl shadow-2xl p-8">
+            <form class="space-y-6" @submit.prevent="handleLogin">
+                <!-- Error message -->
+                <div x-show="error" x-text="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" x-transition></div>
+
+                <!-- Email field -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-white mb-2">
+                        Email address
+                    </label>
+                    <input 
+                        id="email" 
+                        name="email" 
+                        type="email" 
+                        required 
+                        x-model="formData.email"
+                        class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                        placeholder="you@example.com"
+                    >
+                </div>
+
+                <!-- Password field -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-white mb-2">
+                        Password
+                    </label>
+                    <div class="relative">
+                        <input 
+                            id="password" 
+                            name="password" 
+                            :type="showPassword ? 'text' : 'password'" 
+                            required 
+                            x-model="formData.password"
+                            class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                            placeholder="••••••••"
+                        >
+                        <button 
+                            type="button" 
+                            @click="showPassword = !showPassword"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 hover:text-gray-800"
+                        >
+                            <svg x-show="!showPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            <svg x-show="showPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remember me & Forgot password -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input 
+                            id="remember-me" 
+                            name="remember-me" 
+                            type="checkbox" 
+                            class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                        >
+                        <label for="remember-me" class="ml-2 block text-sm text-white">
+                            Remember me
+                        </label>
+                    </div>
+
+                    <div class="text-sm">
+                        <a href="#" class="font-medium text-purple-200 hover:text-white transition-colors">
+                            Forgot password?
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Submit button -->
+                <div>
+                    <button 
+                        type="submit" 
+                        :disabled="loading"
+                        class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105"
+                    >
+                        <span x-show="!loading">Sign in</span>
+                        <span x-show="loading" class="flex items-center">
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Signing in...
+                        </span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Register link -->
+            <div class="mt-6 text-center">
+                <p class="text-sm text-white">
+                    Don't have an account?
+                    <a href="/auth/register" class="font-medium text-purple-200 hover:text-white transition-colors">
+                        Create one now
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loginForm() {
+        return {
+            formData: {
+                email: '',
+                password: ''
+            },
+            showPassword: false,
+            loading: false,
+            error: null,
+
+            async handleLogin() {
+                this.loading = true;
+                this.error = null;
+
+                try {
+                    const response = await fetch('/auth/api/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(this.formData)
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // Store tokens
+                        localStorage.setItem('access_token', data.access_token);
+                        localStorage.setItem('refresh_token', data.refresh_token);
+                        localStorage.setItem('user', JSON.stringify(data.user));
+
+                        // Get next URL from template or default to dashboard
+                        const nextUrl = '{{ next }}';
+                        window.location.href = nextUrl;
+                    } else {
+                        this.error = data.detail || 'Login failed. Please try again.';
+                    }
+                } catch (error) {
+                    this.error = 'An error occurred. Please try again.';
+                    console.error('Login error:', error);
+                } finally {
+                    this.loading = false;
+                }
+            }
+        }
+    }
+</script>
+{% endblock %}

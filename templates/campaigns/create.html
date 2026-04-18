@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block title %}Create Campaign - {{ settings.app_name }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-3xl">
+    <div class="mb-8">
+        <a href="/campaigns" class="text-purple-400 hover:text-purple-300 inline-flex items-center mb-4">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to Campaigns
+        </a>
+        <h1 class="text-3xl font-bold text-white">Create Warm-Up Campaign</h1>
+        <p class="text-gray-400 mt-2">Set up a new email warm-up campaign to build your sender reputation</p>
+    </div>
+
+    <div x-data="campaignCreate()" class="glass-card">
+        <form @submit.prevent="submitForm">
+            <!-- Campaign Name -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-300 mb-2">
+                    Campaign Name *
+                </label>
+                <input 
+                    type="text" 
+                    x-model="form.name" 
+                    required
+                    class="w-full px-4 py-3 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="e.g., Main Domain Warm-Up">
+            </div>
+
+            <!-- Description -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-300 mb-2">
+                    Description
+                </label>
+                <textarea 
+                    x-model="form.description" 
+                    rows="3"
+                    class="w-full px-4 py-3 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Optional description of this campaign..."></textarea>
+            </div>
+
+            <!-- Start Date -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-300 mb-2">
+                    Start Date *
+                </label>
+                <input 
+                    type="date" 
+                    x-model="form.start_date" 
+                    required
+                    :min="new Date().toISOString().split('T')[0]"
+                    class="w-full px-4 py-3 bg-white/10 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+            </div>
+
+            <!-- Volume Settings -->
+            <div class="grid grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        Initial Daily Volume *
+                    </label>
+                    <input 
+                        type="number" 
+                        x-model.number="form.current_daily_volume" 
+                        required
+                        min="5"
+                        max="50"
+                        class="w-full px-4 py-3 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="10">
+                    <p class="text-xs text-gray-400 mt-1">Start with 5-20 emails per day</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        Target Daily Volume *
+                    </label>
+                    <input 
+                        type="number" 
+                        x-model.number="form.target_daily_volume" 
+                        required
+                        :min="form.current_daily_volume"
+                        max="500"
+                        class="w-full px-4 py-3 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="100">
+                    <p class="text-xs text-gray-400 mt-1">Your goal volume</p>
+                </div>
+            </div>
+
+            <!-- Inbox Selection -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-300 mb-2">
+                    Select Inboxes *
+                </label>
+                
+                {% if inboxes and inboxes|length > 0 %}
+                <div class="space-y-2 max-h-64 overflow-y-auto p-4 bg-black/20 rounded-lg">
+                    {% for inbox in inboxes %}
+                    <label class="flex items-center p-3 bg-white/5 hover:bg-white/10 rounded-lg cursor-pointer transition-colors">
+                        <input 
+                            type="checkbox" 
+                            value="{{ inbox.id }}"
+                            @change="toggleInbox({{ inbox.id }})"
+                            class="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500">
+                        <div class="ml-3 flex-1">
+                            <p class="text-white font-medium">{{ inbox.email_address }}</p>
+                            <p class="text-sm text-gray-400">Daily Limit: {{ inbox.daily_send_limit }}</p>
+                        </div>
+                        <span class="px-2 py-1 text-xs rounded-full {% if inbox.status|lower == 'active' %}bg-green-500/20 text-green-400{% else %}bg-gray-500/20 text-gray-400{% endif %}">
+                            {{ inbox.status|title }}
+                        </span>
+                    </label>
+                    {% endfor %}
+                </div>
+                <p class="text-xs text-gray-400 mt-2" x-text="`${form.inbox_ids.length} inbox(es) selected`"></p>
+                
+                {% if inboxes|length == 1 %}
+                <div class="mt-3 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                    <p class="text-blue-400 text-sm mb-2">💡 <strong>Good news!</strong> With the new bot-based warmup system, you only need 1 inbox!</p>
+                    <p class="text-gray-300 text-sm">Your emails will be sent to our bot accounts, which will automatically reply to build your sender reputation.</p>
+                </div>
+                {% endif %}
+                
+                {% else %}
+                <div class="p-6 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                    <p class="text-yellow-400 mb-3">⚠️ You need at least 1 connected inbox to create a campaign.</p>
+                    <a href="/inbox/connect" class="btn-primary inline-flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Connect Your First Inbox
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- AI Replies -->
+            <div class="mb-6">
+                <label class="flex items-center cursor-pointer">
+                    <input 
+                        type="checkbox" 
+                        x-model="form.use_ai_replies" 
+                        class="w-5 h-5 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500">
+                    <span class="ml-3">
+                        <span class="text-white font-medium">Enable AI-Generated Replies</span>
+                        <span class="block text-sm text-gray-400">Use OpenAI to generate natural conversation replies</span>
+                    </span>
+                </label>
+            </div>
+
+            <!-- Reply Rate -->
+            <div class="mb-6" x-show="form.use_ai_replies">
+                <label class="block text-sm font-medium text-gray-300 mb-2">
+                    Reply Rate: <span x-text="(form.reply_rate * 100).toFixed(0) + '%'"></span>
+                </label>
+                <input 
+                    type="range" 
+                    x-model.number="form.reply_rate" 
+                    min="0.3"
+                    max="1.0"
+                    step="0.05"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500">
+                <p class="text-xs text-gray-400 mt-1">Percentage of emails that will receive replies (30-100%)</p>
+            </div>
+
+            <!-- Error Message -->
+            <div x-show="error" class="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                <p class="text-red-400 text-sm" x-text="error"></p>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex gap-4">
+                <button 
+                    type="submit" 
+                    :disabled="loading || form.inbox_ids.length < 1"
+                    class="flex-1 px-6 py-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-colors">
+                    <span x-show="!loading">Create Campaign</span>
+                    <span x-show="loading" class="flex items-center justify-center">
+                        <svg class="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Creating...
+                    </span>
+                </button>
+                <a href="/campaigns" class="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg text-white transition-colors">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function campaignCreate() {
+    return {
+        loading: false,
+        error: '',
+        form: {
+            name: '',
+            description: '',
+            start_date: new Date().toISOString().split('T')[0],
+            current_daily_volume: 10,
+            target_daily_volume: 100,
+            inbox_ids: [],
+            use_ai_replies: true,
+            reply_rate: 0.7
+        },
+
+        toggleInbox(inboxId) {
+            const index = this.form.inbox_ids.indexOf(inboxId);
+            if (index > -1) {
+                this.form.inbox_ids.splice(index, 1);
+            } else {
+                this.form.inbox_ids.push(inboxId);
+            }
+        },
+
+        async submitForm() {
+            this.error = '';
+
+            // Validation
+            if (this.form.inbox_ids.length < 1) {
+                this.error = 'Please select at least 1 inbox for the campaign';
+                return;
+            }
+
+            if (this.form.target_daily_volume < this.form.current_daily_volume) {
+                this.error = 'Target volume must be greater than or equal to initial volume';
+                return;
+            }
+
+            this.loading = true;
+
+            try {
+                const response = await apiFetch('/campaigns/api/create', {
+                    method: 'POST',
+                    body: JSON.stringify(this.form)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showToast('Campaign created successfully!', 'success');
+                    
+                    // Redirect to campaign detail
+                    setTimeout(() => {
+                        window.location.href = `/campaigns/${data.campaign_id}`;
+                    }, 1000);
+                } else {
+                    const error = await response.json();
+                    this.error = error.detail || 'Failed to create campaign';
+                    showToast(this.error, 'error');
+                }
+            } catch (error) {
+                this.error = error.message || 'Failed to create campaign';
+                showToast(this.error, 'error');
+            } finally {
+                this.loading = false;
+            }
+        }
+    }
+}
+</script>
+{% endblock %}

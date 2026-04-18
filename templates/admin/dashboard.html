@@ -1,0 +1,748 @@
+{% extends "base.html" %}
+{% import "components/card.html" as components %}
+
+{% block title %}Admin Dashboard - {{ settings.app_name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="adminDashboard()">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+            <div>
+                <h1 class="text-4xl font-bold text-white flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <span>Admin Dashboard</span>
+                </h1>
+                <p class="text-white/60 mt-2">Manage your email warmup platform</p>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="px-4 py-2 glass-dark text-white rounded-lg border border-white/20 text-sm font-medium">
+                    {{ user.email }}
+                </span>
+                <span class="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-lg text-sm font-medium shadow-lg">
+                    Admin
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {{ components.stat_card(
+            "Total Users",
+            stats.total_users,
+            '<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>',
+            "primary"
+        ) }}
+        
+        {{ components.stat_card(
+            "Active Bots",
+            stats.active_bots,
+            '<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>',
+            "green"
+        ) }}
+        
+        {{ components.stat_card(
+            "Active Campaigns",
+            stats.active_campaigns,
+            '<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>',
+            "purple"
+        ) }}
+        
+        {{ components.stat_card(
+            "Emails Today",
+            stats.emails_today,
+            '<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>',
+            "pink"
+        ) }}
+    </div>
+
+    <!-- Tabs -->
+    <div class="mb-6">
+        <div class="glass-dark rounded-xl p-2 inline-flex space-x-2 overflow-x-auto">
+            <button @click="activeTab = 'bots'" 
+                    :class="activeTab === 'bots' ? 'bg-gradient-to-r from-primary-500 to-purple-600 text-white' : 'text-white/60 hover:text-white'"
+                    class="px-6 py-2 rounded-lg font-medium transition-all whitespace-nowrap">
+                <span class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                    </svg>
+                    <span>Bot Emails</span>
+                </span>
+            </button>
+            <button @click="activeTab = 'templates'" 
+                    :class="activeTab === 'templates' ? 'bg-gradient-to-r from-primary-500 to-purple-600 text-white' : 'text-white/60 hover:text-white'"
+                    class="px-6 py-2 rounded-lg font-medium transition-all whitespace-nowrap">
+                <span class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span>Email Templates</span>
+                </span>
+            </button>
+            <button @click="activeTab = 'users'" 
+                    :class="activeTab === 'users' ? 'bg-gradient-to-r from-primary-500 to-purple-600 text-white' : 'text-white/60 hover:text-white'"
+                    class="px-6 py-2 rounded-lg font-medium transition-all whitespace-nowrap">
+                <span class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    <span>Users</span>
+                </span>
+            </button>
+            <button @click="activeTab = 'system'" 
+                    :class="activeTab === 'system' ? 'bg-gradient-to-r from-primary-500 to-purple-600 text-white' : 'text-white/60 hover:text-white'"
+                    class="px-6 py-2 rounded-lg font-medium transition-all whitespace-nowrap">
+                <span class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>System Health</span>
+                </span>
+            </button>
+            <button @click="activeTab = 'settings'" 
+                    :class="activeTab === 'settings' ? 'bg-gradient-to-r from-primary-500 to-purple-600 text-white' : 'text-white/60 hover:text-white'"
+                    class="px-6 py-2 rounded-lg font-medium transition-all whitespace-nowrap">
+                <span class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <span>Settings</span>
+                </span>
+            </button>
+            <button @click="activeTab = 'security'" 
+                    :class="activeTab === 'security' ? 'bg-gradient-to-r from-primary-500 to-purple-600 text-white' : 'text-white/60 hover:text-white'"
+                    class="px-6 py-2 rounded-lg font-medium transition-all whitespace-nowrap">
+                <span class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                    <span>Security Events</span>
+                </span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Bot Management Tab -->
+    <div x-show="activeTab === 'bots'" x-transition>
+        <template x-if="loadingBots">
+            <div class="flex items-center justify-center py-20">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+            </div>
+        </template>
+        <template x-if="!loadingBots">
+            <div>
+                {% include 'admin/tabs/bots.html' %}
+            </div>
+        </template>
+    </div>
+
+    <!-- Email Templates Tab -->
+    <div x-show="activeTab === 'templates'" x-transition>
+        <template x-if="loadingTemplates">
+            <div class="flex items-center justify-center py-20">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+            </div>
+        </template>
+        <template x-if="!loadingTemplates">
+            <div>
+                {% include 'admin/tabs/templates.html' %}
+            </div>
+        </template>
+    </div>
+
+    <!-- Users Tab -->
+    <div x-show="activeTab === 'users'" x-transition>
+        <template x-if="loadingUsers">
+            <div class="flex items-center justify-center py-20">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+            </div>
+        </template>
+        <template x-if="!loadingUsers">
+            <div>
+                {% include 'admin/tabs/users.html' %}
+            </div>
+        </template>
+    </div>
+
+    <!-- System Health Tab -->
+    <div x-show="activeTab === 'system'" x-transition>
+        <template x-if="loadingSystem">
+            <div class="flex items-center justify-center py-20">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+            </div>
+        </template>
+        <template x-if="!loadingSystem">
+            <div>
+                {% include 'admin/tabs/system.html' %}
+            </div>
+        </template>
+    </div>
+
+    <!-- Settings Tab -->
+    <div x-show="activeTab === 'settings'" x-transition>
+        <template x-if="loadingSettings">
+            <div class="flex items-center justify-center py-20">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+            </div>
+        </template>
+        <template x-if="!loadingSettings">
+            <div>
+                {% include 'admin/tabs/settings.html' %}
+            </div>
+        </template>
+    </div>
+
+    <!-- Security Events Tab -->
+    <div x-show="activeTab === 'security'" x-transition>
+        <template x-if="loadingSecurity">
+            <div class="flex items-center justify-center py-20">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+            </div>
+        </template>
+        <template x-if="!loadingSecurity">
+            <div>
+                {% include 'admin/tabs/security.html' %}
+            </div>
+        </template>
+    </div>
+
+
+    <!-- Modals - Outside tab containers for proper z-index -->
+    <!-- Add Bot Modal -->
+    <div x-show="showAddBotModal" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 overflow-y-auto" 
+         style="display: none;">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showAddBotModal = false"></div>
+            
+            <div class="relative glass-dark rounded-2xl max-w-md w-full p-6 shadow-2xl">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-white">Add Bot Email</h3>
+                    <button @click="showAddBotModal = false" class="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <form @submit.prevent="addBot" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-white/80 mb-2">Email Address</label>
+                        <input type="email" x-model="newBot.email_address" required
+                               class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                               placeholder="bot@example.com">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-white/80 mb-2">Provider</label>
+                        <select x-model="newBot.provider" required
+                                class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                            <option class="text-black" value="gmail">Gmail</option>
+                            <option class="text-black" value="outlook">Outlook</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-white/80 mb-2">Client ID</label>
+                        <input type="text" x-model="newBot.client_id" required
+                               class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                               placeholder="OAuth Client ID">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-white/80 mb-2">Client Secret</label>
+                        <input type="password" x-model="newBot.client_secret" required
+                               class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                               placeholder="OAuth Client Secret">
+                    </div>
+
+                    <div class="flex items-center space-x-3 pt-4">
+                        <button type="submit" class="flex-1 px-4 py-3 bg-gradient-to-r from-primary-500 to-purple-600 text-white rounded-lg hover:from-primary-600 hover:to-purple-700 transition-all font-medium">
+                            Add Bot
+                        </button>
+                        <button type="button" @click="showAddBotModal = false" class="flex-1 px-4 py-3 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors font-medium">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Bot Modal -->
+    <div x-show="showEditBotModal" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 overflow-y-auto" 
+         style="display: none;">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showEditBotModal = false"></div>
+            
+            <div class="relative glass-dark rounded-2xl max-w-md w-full p-6 shadow-2xl">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-white">Edit Bot Email</h3>
+                    <button @click="showEditBotModal = false" class="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <form @submit.prevent="updateBot" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-white/80 mb-2">Email Address</label>
+                        <input type="email" x-model="editingBot.email_address" readonly
+                               class="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white/60 cursor-not-allowed"
+                               placeholder="bot@example.com">
+                        <p class="text-xs text-white/40 mt-1">Email address cannot be changed</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-white/80 mb-2">Status</label>
+                        <select x-model="editingBot.status" required
+                                class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                            <option value="active">Active</option>
+                            <option value="paused">Paused</option>
+                            <option value="error">Error</option>
+                            <option value="disconnected">Disconnected</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-white/80 mb-2">Client ID (Optional)</label>
+                        <input type="text" x-model="editingBot.client_id"
+                               class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                               placeholder="Leave blank to keep current">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-white/80 mb-2">Client Secret (Optional)</label>
+                        <input type="password" x-model="editingBot.client_secret"
+                               class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                               placeholder="Leave blank to keep current">
+                    </div>
+
+                    <div class="flex items-center space-x-3 pt-4">
+                        <button type="submit" class="flex-1 px-4 py-3 bg-gradient-to-r from-primary-500 to-purple-600 text-white rounded-lg hover:from-primary-600 hover:to-purple-700 transition-all font-medium">
+                            Update Bot
+                        </button>
+                        <button type="button" @click="showEditBotModal = false" class="flex-1 px-4 py-3 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors font-medium">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function adminDashboard() {
+    return {
+        activeTab: 'bots',
+        bots: [],
+        users: [],
+        templates: [],
+        securityEvents: [],
+        securityStats: {},
+        loadingBots: false,
+        loadingUsers: false,
+        loadingTemplates: false,
+        loadingSystem: false,
+        loadingSettings: false,
+        loadingSecurity: false,
+        botsLoaded: false,
+        usersLoaded: false,
+        templatesLoaded: false,
+        systemLoaded: false,
+        settingsLoaded: false,
+        securityLoaded: false,
+        showAddBotModal: false,
+        showEditBotModal: false,
+        showAddTemplateModal: false,
+        systemHealth: {
+            status: 'checking',
+            timestamp: null,
+            components: {
+                celery_workers: { status: 'unknown', message: 'Loading...', workers_count: 0 },
+                celery_beat: { status: 'unknown', message: 'Loading...', scheduled_tasks: 0 },
+                redis: { status: 'unknown', message: 'Loading...' },
+                database: { status: 'unknown', message: 'Loading...' }
+            },
+            tasks: {
+                active_tasks: 0,
+                scheduled_tasks: 0,
+                reserved_tasks: 0,
+                total_tasks: 0
+            }
+        },
+        settings: {
+            warmup_increment_days: 7,
+            warmup_increment_amount: 15,
+            min_daily_emails: 5,
+            max_daily_emails: 100,
+            max_spam_complaint_rate: 0.01,
+            max_bounce_rate: 0.05,
+            auto_pause_on_spam: true
+        },
+        tasks: [],
+        saving: false,
+        newBot: {
+            email_address: '',
+            provider: 'gmail',
+            client_id: '',
+            client_secret: ''
+        },
+        editingBot: {
+            id: null,
+            email_address: '',
+            status: 'active',
+            client_id: '',
+            client_secret: ''
+        },
+        newTemplate: {
+            name: '',
+            category: 'welcome',
+            subject: '',
+            body: '',
+            is_active: true
+        },
+        
+        init() {
+            // Watch for tab changes to lazy load (including initial tab)
+            this.$watch('activeTab', (newTab) => {
+                this.loadTabData(newTab);
+            });
+            
+            // Load initial tab
+            this.loadTabData(this.activeTab);
+        },
+        
+        loadTabData(tab) {
+            switch(tab) {
+                case 'bots':
+                    if (!this.botsLoaded) this.loadBots();
+                    break;
+                case 'users':
+                    if (!this.usersLoaded) this.loadUsers();
+                    break;
+                case 'templates':
+                    if (!this.templatesLoaded) this.loadTemplates();
+                    break;
+                case 'system':
+                    if (!this.systemLoaded) this.loadSystemHealth();
+                    break;
+                case 'settings':
+                    if (!this.settingsLoaded) this.loadSettings();
+                    break;
+                case 'security':
+                    if (!this.securityLoaded) this.loadSecurityEvents();
+                    break;
+            }
+        },
+        
+        async loadBots() {
+            this.loadingBots = true;
+            try {
+                const response = await apiFetch('/admin/bots');
+                if (response.ok) {
+                    this.bots = await response.json();
+                    this.botsLoaded = true;
+                }
+            } catch (error) {
+                showToast('Failed to load bots', 'error');
+            } finally {
+                this.loadingBots = false;
+            }
+        },
+        
+        async loadUsers() {
+            this.loadingUsers = true;
+            try {
+                const response = await apiFetch('/admin/users');
+                if (response.ok) {
+                    this.users = await response.json();
+                    this.usersLoaded = true;
+                }
+            } catch (error) {
+                showToast('Failed to load users', 'error');
+            } finally {
+                this.loadingUsers = false;
+            }
+        },
+        
+        async loadTemplates() {
+            this.loadingTemplates = true;
+            try {
+                const response = await apiFetch('/admin/templates');
+                if (response.ok) {
+                    this.templates = await response.json();
+                    this.templatesLoaded = true;
+                } else {
+                    this.templates = [];
+                    this.templatesLoaded = true;
+                }
+            } catch (error) {
+                this.templates = [];
+                this.templatesLoaded = true;
+            } finally {
+                this.loadingTemplates = false;
+            }
+        },
+        
+        async loadSystemHealth() {
+            this.loadingSystem = true;
+            try {
+                const response = await apiFetch('/api/monitoring/health');
+                if (response.ok) {
+                    this.systemHealth = await response.json();
+                    this.systemLoaded = true;
+                } else {
+                    showToast('Failed to load system health', 'error');
+                }
+            } catch (error) {
+                showToast('Error checking system health', 'error');
+            } finally {
+                this.loadingSystem = false;
+            }
+        },
+        
+        async loadSettings() {
+            this.loadingSettings = true;
+            try {
+                // Load warmup settings
+                const settingsResponse = await apiFetch('/admin/settings/warmup');
+                if (settingsResponse.ok) {
+                    const data = await settingsResponse.json();
+                    this.settings = { ...this.settings, ...data };
+                }
+                
+                // Load task schedules
+                const tasksResponse = await apiFetch('/admin/tasks');
+                if (tasksResponse.ok) {
+                    this.tasks = await tasksResponse.json();
+                }
+                
+                this.settingsLoaded = true;
+            } catch (error) {
+                showToast('Error loading settings', 'error');
+            } finally {
+                this.loadingSettings = false;
+            }
+        },
+        
+        async loadSecurityEvents() {
+            this.loadingSecurity = true;
+            try {
+                const response = await apiFetch('/admin/security-events/data');
+                if (response.ok) {
+                    const data = await response.json();
+                    this.securityEvents = data.events || [];
+                    this.securityStats = data.stats || {};
+                    this.securityLoaded = true;
+                }
+            } catch (error) {
+                showToast('Failed to load security events', 'error');
+            } finally {
+                this.loadingSecurity = false;
+            }
+        },
+        
+        async addBot() {
+            try {
+                const response = await apiFetch('/admin/bots', {
+                    method: 'POST',
+                    body: JSON.stringify(this.newBot)
+                });
+                
+                if (response.ok) {
+                    showToast('Bot added successfully!', 'success');
+                    this.showAddBotModal = false;
+                    this.newBot = { email_address: '', provider: 'gmail', client_id: '', client_secret: '' };
+                    await this.loadBots();
+                } else {
+                    const error = await response.json();
+                    showToast(error.detail || 'Failed to add bot', 'error');
+                }
+            } catch (error) {
+                showToast('Failed to add bot', 'error');
+            }
+        },
+        
+        async deleteBot(botId) {
+            if (!confirm('Are you sure you want to delete this bot?')) return;
+            
+            try {
+                const response = await apiFetch(`/admin/bots/${botId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showToast('Bot deleted successfully!', 'success');
+                    await this.loadBots();
+                } else {
+                    showToast('Failed to delete bot', 'error');
+                }
+            } catch (error) {
+                showToast('Failed to delete bot', 'error');
+            }
+        },
+        
+        editBot(bot) {
+            this.editingBot = {
+                id: bot.id,
+                email_address: bot.email_address,
+                status: bot.status,
+                client_id: '',
+                client_secret: ''
+            };
+            this.showEditBotModal = true;
+        },
+        
+        async updateBot() {
+            try {
+                const updateData = {
+                    status: this.editingBot.status
+                };
+                
+                // Only include client_id and client_secret if they're not empty
+                if (this.editingBot.client_id) {
+                    updateData.client_id = this.editingBot.client_id;
+                }
+                if (this.editingBot.client_secret) {
+                    updateData.client_secret = this.editingBot.client_secret;
+                }
+                
+                const response = await apiFetch(`/admin/bots/${this.editingBot.id}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify(updateData)
+                });
+                
+                if (response.ok) {
+                    showToast('Bot updated successfully!', 'success');
+                    this.showEditBotModal = false;
+                    this.editingBot = { id: null, email_address: '', status: 'active', client_id: '', client_secret: '' };
+                    await this.loadBots();
+                } else {
+                    const error = await response.json();
+                    showToast(error.detail || 'Failed to update bot', 'error');
+                }
+            } catch (error) {
+                showToast('Failed to update bot', 'error');
+            }
+        },
+        
+        async addTemplate() {
+            try {
+                const response = await apiFetch('/admin/templates', {
+                    method: 'POST',
+                    body: JSON.stringify(this.newTemplate)
+                });
+                
+                if (response.ok) {
+                    showToast('Template created successfully!', 'success');
+                    this.showAddTemplateModal = false;
+                    this.newTemplate = { name: '', category: 'welcome', subject: '', body: '', is_active: true };
+                    await this.loadTemplates();
+                } else {
+                    const error = await response.json();
+                    showToast(error.detail || 'Failed to create template', 'error');
+                }
+            } catch (error) {
+                showToast('Failed to create template', 'error');
+            }
+        },
+        
+        async deleteTemplate(templateId) {
+            if (!confirm('Are you sure you want to delete this template?')) return;
+            
+            try {
+                const response = await apiFetch(`/admin/templates/${templateId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showToast('Template deleted successfully!', 'success');
+                    await this.loadTemplates();
+                } else {
+                    showToast('Failed to delete template', 'error');
+                }
+            } catch (error) {
+                showToast('Failed to delete template', 'error');
+            }
+        },
+        
+        editTemplate(template) {
+            showToast('Edit functionality coming soon!', 'info');
+        },
+        
+        async saveSettings() {
+            this.saving = true;
+            try {
+                // Save warmup settings
+                const settingsResponse = await apiFetch('/admin/settings/warmup', {
+                    method: 'PUT',
+                    body: JSON.stringify(this.settings)
+                });
+                
+                if (!settingsResponse.ok) {
+                    throw new Error('Failed to save warmup settings');
+                }
+                
+                // Save task schedules
+                for (const task of this.tasks) {
+                    const taskResponse = await apiFetch(`/admin/tasks/${task.id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            interval_minutes: task.interval_minutes,
+                            is_enabled: task.is_enabled
+                        })
+                    });
+                    
+                    if (!taskResponse.ok) {
+                        throw new Error(`Failed to update task ${task.display_name}`);
+                    }
+                }
+                
+                showToast('Settings saved successfully', 'success');
+                await this.loadSettings();
+            } catch (error) {
+                showToast(error.message || 'Error saving settings', 'error');
+            } finally {
+                this.saving = false;
+            }
+        },
+        
+        generateTimelinePreview() {
+            const days = parseInt(this.settings.warmup_increment_days);
+            const amount = parseInt(this.settings.warmup_increment_amount);
+            const start = parseInt(this.settings.min_daily_emails);
+            const max = parseInt(this.settings.max_daily_emails);
+            
+            const daysToMax = Math.ceil((max - start) / amount) * days;
+            const increments = Math.ceil((max - start) / amount);
+            
+            return `Starting at ${start} emails/day, increasing by ${amount} every ${days} days. Will reach ${max} emails/day in approximately ${daysToMax} days (${increments} increments).`;
+        }
+    }
+}
+</script>
+{% endblock %}

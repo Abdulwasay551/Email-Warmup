@@ -1,0 +1,147 @@
+<!-- Email Templates Tab -->
+<div class="glass-dark rounded-xl p-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h2 class="text-2xl font-bold text-white">Email Templates</h2>
+            <p class="text-white/60 mt-1">Create and manage email templates when AI is unavailable</p>
+        </div>
+        <button @click="showAddTemplateModal = true" class="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            <span>New Template</span>
+        </button>
+    </div>
+
+    <!-- Templates List -->
+    <div class="space-y-4">
+        <template x-if="templates.length === 0">
+            <div class="text-center py-12">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-white/10 rounded-full mb-4">
+                    <svg class="w-8 h-8 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-2">No Templates Yet</h3>
+                <p class="text-white/60 mb-6">Create templates for consistent email communications</p>
+                <button @click="showAddTemplateModal = true" class="px-6 py-3 bg-gradient-to-r from-primary-500 to-purple-600 text-white rounded-lg hover:from-primary-600 hover:to-purple-700 transition-all">
+                    Create Your First Template
+                </button>
+            </div>
+        </template>
+
+        <template x-for="template in templates" :key="template.id">
+            <div class="glass-dark rounded-lg p-6 hover:bg-white/5 transition-colors">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <h3 class="text-lg font-semibold text-white" x-text="template.name"></h3>
+                            <span :class="template.is_active ? 'bg-green-500/20 text-green-300' : 'bg-gray-500/20 text-gray-300'" 
+                                  class="px-2 py-1 rounded-full text-xs font-semibold">
+                                <span x-text="template.is_active ? 'Active' : 'Inactive'"></span>
+                            </span>
+                        </div>
+                        <p class="text-white/60 text-sm mb-4" x-text="template.subject"></p>
+                        <div class="bg-black/20 rounded-lg p-4 mb-4">
+                            <p class="text-white/80 text-sm line-clamp-3" x-text="template.body"></p>
+                        </div>
+                        <div class="flex items-center space-x-4 text-xs text-white/40">
+                            <span x-text="'Used ' + (template.usage_count || 0) + ' times'"></span>
+                            <span x-text="'Category: ' + template.category"></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2 ml-4">
+                        <button @click="editTemplate(template)" class="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                            <svg class="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                            </svg>
+                        </button>
+                        <button @click="deleteTemplate(template.id)" class="p-2 hover:bg-red-500/20 rounded-lg transition-colors">
+                            <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <!-- Add Template Modal -->
+    <div x-show="showAddTemplateModal" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 overflow-y-auto" 
+         style="display: none;">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showAddTemplateModal = false"></div>
+            
+            <div class="relative glass-dark rounded-2xl max-w-2xl w-full p-6 shadow-2xl" @click.away="showAddTemplateModal = false">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-white">Create Email Template</h3>
+                    <button @click="showAddTemplateModal = false" class="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <form @submit.prevent="addTemplate" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-white/80 mb-2">Template Name</label>
+                        <input type="text" x-model="newTemplate.name" required
+                               class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                               placeholder="e.g., Welcome Email">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-white/80 mb-2">Category</label>
+                        <select x-model="newTemplate.category" required
+                                class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                            <option value="welcome">Welcome</option>
+                            <option value="follow-up">Follow Up</option>
+                            <option value="engagement">Engagement</option>
+                            <option value="re-engagement">Re-engagement</option>
+                            <option value="newsletter">Newsletter</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-white/80 mb-2">Subject Line</label>
+                        <input type="text" x-model="newTemplate.subject" required
+                               class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                               placeholder="Email subject">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-white/80 mb-2">Email Body</label>
+                        <textarea x-model="newTemplate.body" required rows="8"
+                                  class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+                                  placeholder="Email content..."></textarea>
+                        <p class="text-xs text-white/40 mt-2">Use {{first_name}}, {{email}}, {{company}} as variables</p>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" x-model="newTemplate.is_active" id="template-active" class="w-4 h-4 rounded">
+                        <label for="template-active" class="text-sm text-white/80">Set as active template</label>
+                    </div>
+
+                    <div class="flex items-center space-x-3 pt-4">
+                        <button type="submit" class="flex-1 px-4 py-3 bg-gradient-to-r from-primary-500 to-purple-600 text-white rounded-lg hover:from-primary-600 hover:to-purple-700 transition-all font-medium">
+                            Create Template
+                        </button>
+                        <button type="button" @click="showAddTemplateModal = false" class="flex-1 px-4 py-3 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors font-medium">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

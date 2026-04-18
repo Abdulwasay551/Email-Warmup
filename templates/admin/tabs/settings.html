@@ -1,0 +1,162 @@
+<div>
+    <!-- Warmup Configuration Section -->
+    <div class="glass rounded-2xl p-8 mb-6 shadow-lg">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+                <div class="h-16 w-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+                    <svg class="h-9 w-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold text-white">System Settings</h2>
+                    <p class="text-gray-300 text-sm">Configure warmup parameters and task schedules</p>
+                </div>
+            </div>
+            <button @click="saveSettings()" :disabled="saving" class="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 rounded-xl text-white font-semibold transition-all transform hover:scale-105 shadow-lg">
+                <span class="flex items-center space-x-2">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    <span x-text="saving ? 'Saving...' : 'Save Changes'"></span>
+                </span>
+            </button>
+        </div>
+
+        <!-- Warmup Settings -->
+        <div class="bg-white/5 rounded-xl p-6 border border-white/10 mb-6">
+            <h3 class="text-xl font-bold text-white mb-4 flex items-center space-x-2">
+                <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                <span>Email Warmup Configuration</span>
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Increment Days -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        Volume Increment Interval (Days)
+                    </label>
+                    <input type="number" x-model="settings.warmup_increment_days" min="1" max="30" 
+                           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <p class="text-xs text-gray-400 mt-1">How often to increase email volume</p>
+                </div>
+
+                <!-- Increment Amount -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        Volume Increment Amount (Emails)
+                    </label>
+                    <input type="number" x-model="settings.warmup_increment_amount" min="1" max="50" 
+                           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <p class="text-xs text-gray-400 mt-1">Number of emails to add per increment</p>
+                </div>
+
+                <!-- Min Daily Emails -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        Minimum Daily Emails
+                    </label>
+                    <input type="number" x-model="settings.min_daily_emails" min="1" max="20" 
+                           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <p class="text-xs text-gray-400 mt-1">Starting volume for new campaigns</p>
+                </div>
+
+                <!-- Max Daily Emails -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        Maximum Daily Emails
+                    </label>
+                    <input type="number" x-model="settings.max_daily_emails" min="50" max="500" 
+                           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <p class="text-xs text-gray-400 mt-1">Maximum allowed emails per day</p>
+                </div>
+            </div>
+
+            <!-- Warmup Timeline Preview -->
+            <div class="mt-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                <h4 class="text-sm font-semibold text-blue-300 mb-2">Timeline Preview</h4>
+                <p class="text-sm text-gray-300" x-text="generateTimelinePreview()"></p>
+            </div>
+        </div>
+
+        <!-- Safety Settings -->
+        <div class="bg-white/5 rounded-xl p-6 border border-white/10 mb-6">
+            <h3 class="text-xl font-bold text-white mb-4 flex items-center space-x-2">
+                <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <span>Safety Thresholds</span>
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Max Spam Rate -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        Max Spam Complaint Rate
+                    </label>
+                    <input type="number" x-model="settings.max_spam_complaint_rate" min="0" max="0.1" step="0.001" 
+                           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                    <p class="text-xs text-gray-400 mt-1">Decimal (0.01 = 1%)</p>
+                </div>
+
+                <!-- Max Bounce Rate -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        Max Bounce Rate
+                    </label>
+                    <input type="number" x-model="settings.max_bounce_rate" min="0" max="0.2" step="0.001" 
+                           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                    <p class="text-xs text-gray-400 mt-1">Decimal (0.05 = 5%)</p>
+                </div>
+
+                <!-- Auto Pause -->
+                <div class="md:col-span-2">
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" x-model="settings.auto_pause_on_spam" 
+                               class="w-5 h-5 rounded bg-white/10 border-white/20 text-blue-500 focus:ring-2 focus:ring-blue-500">
+                        <span class="text-sm font-medium text-gray-300">Auto-pause campaigns on spam detection</span>
+                    </label>
+                    <p class="text-xs text-gray-400 mt-1 ml-8">Automatically pause campaigns that exceed safety thresholds</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Schedules -->
+        <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+            <h3 class="text-xl font-bold text-white mb-4 flex items-center space-x-2">
+                <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>Task Schedules</span>
+            </h3>
+            <div class="space-y-4">
+                <template x-for="task in tasks" :key="task.task_name">
+                    <div class="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10">
+                        <div class="flex-1">
+                            <h4 class="text-white font-semibold" x-text="task.display_name"></h4>
+                            <p class="text-sm text-gray-400" x-text="task.description"></p>
+                            <div class="flex items-center space-x-4 mt-2">
+                                <span class="text-xs text-gray-500">
+                                    Last run: <span x-text="task.last_run ? new Date(task.last_run).toLocaleString() : 'Never'"></span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center space-x-2">
+                                <input type="number" x-model="task.interval_minutes" min="1" max="1440" 
+                                       class="w-20 px-3 py-2 bg-white/10 border border-white/20 rounded text-white text-center focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <span class="text-sm text-gray-400">min</span>
+                            </div>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" x-model="task.is_enabled" 
+                                       class="w-5 h-5 rounded bg-white/10 border-white/20 text-green-500 focus:ring-2 focus:ring-green-500">
+                                <span class="ml-2 text-sm" :class="task.is_enabled ? 'text-green-400' : 'text-gray-500'" x-text="task.is_enabled ? 'Enabled' : 'Disabled'"></span>
+                            </label>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+</div>

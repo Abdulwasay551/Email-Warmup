@@ -1,0 +1,207 @@
+    <div>
+    <!-- System Health Overview -->
+    <div class="glass rounded-2xl p-8 mb-6 shadow-lg">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+                <div class="h-16 w-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                    <svg class="h-9 w-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold text-white">System Health</h2>
+                    <p class="text-gray-300 text-sm">Real-time monitoring of all system components</p>
+                </div>
+            </div>
+            <button @click="loadSystemHealth()" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-xl text-white font-semibold transition-all transform hover:scale-105 shadow-lg">
+                <span class="flex items-center space-x-2">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    <span>Refresh</span>
+                </span>
+            </button>
+        </div>
+
+        <!-- Overall Status -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between p-6 rounded-2xl" 
+                 :class="{
+                     'bg-green-500/10 border-2 border-green-500/30': systemHealth.status === 'healthy',
+                     'bg-yellow-500/10 border-2 border-yellow-500/30': systemHealth.status === 'degraded',
+                     'bg-red-500/10 border-2 border-red-500/30': systemHealth.status === 'critical'
+                 }">
+                <div class="flex items-center space-x-4">
+                    <div class="h-12 w-12 rounded-xl flex items-center justify-center"
+                         :class="{
+                             'bg-green-500/20': systemHealth.status === 'healthy',
+                             'bg-yellow-500/20': systemHealth.status === 'degraded',
+                             'bg-red-500/20': systemHealth.status === 'critical'
+                         }">
+                        <svg class="h-7 w-7" :class="{
+                                 'text-green-400': systemHealth.status === 'healthy',
+                                 'text-yellow-400': systemHealth.status === 'degraded',
+                                 'text-red-400': systemHealth.status === 'critical'
+                             }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold" :class="{
+                                'text-green-400': systemHealth.status === 'healthy',
+                                'text-yellow-400': systemHealth.status === 'degraded',
+                                'text-red-400': systemHealth.status === 'critical'
+                            }" x-text="(systemHealth.status || 'checking').toUpperCase()"></h3>
+                        <p class="text-gray-300 text-sm" x-text="'Last checked: ' + (systemHealth.timestamp ? new Date(systemHealth.timestamp).toLocaleString() : 'Never')"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Component Status Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Celery Workers -->
+            <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="h-10 w-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-white">Celery Workers</h4>
+                    </div>
+                    <span class="px-3 py-1 rounded-lg text-xs font-semibold"
+                          :class="{
+                              'bg-green-500/20 text-green-400': systemHealth.components?.celery_workers?.status === 'healthy',
+                              'bg-yellow-500/20 text-yellow-400': systemHealth.components?.celery_workers?.status === 'warning',
+                              'bg-red-500/20 text-red-400': systemHealth.components?.celery_workers?.status === 'error'
+                          }"
+                          x-text="(systemHealth.components?.celery_workers?.status || 'unknown').toUpperCase()">
+                    </span>
+                </div>
+                <p class="text-gray-300 text-sm mb-4" x-text="systemHealth.components?.celery_workers?.message || 'Checking...'"></p>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400">Workers Online</span>
+                        <span class="text-white font-semibold" x-text="systemHealth.components?.celery_workers?.workers_count || 0"></span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400">Active Tasks</span>
+                        <span class="text-white font-semibold" x-text="systemHealth.tasks?.active_tasks || 0"></span>
+                    </div>
+                </div>
+                
+                <!-- Worker Details -->
+                <template x-if="systemHealth.components?.celery_workers?.workers?.length > 0">
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <h5 class="text-white font-semibold text-sm mb-2">Worker Details:</h5>
+                        <div class="space-y-2">
+                            <template x-for="worker in systemHealth.components.celery_workers.workers" :key="worker.name">
+                                <div class="flex justify-between items-center text-xs bg-white/5 p-2 rounded">
+                                    <span class="text-gray-300" x-text="worker.name"></span>
+                                    <span class="text-green-400" x-text="worker.status"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Celery Beat -->
+            <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="h-10 w-10 bg-gradient-to-br from-pink-500 to-purple-500 rounded-lg flex items-center justify-center">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-white">Celery Beat</h4>
+                    </div>
+                    <span class="px-3 py-1 rounded-lg text-xs font-semibold"
+                          :class="{
+                              'bg-green-500/20 text-green-400': systemHealth.components?.celery_beat?.status === 'healthy',
+                              'bg-yellow-500/20 text-yellow-400': systemHealth.components?.celery_beat?.status === 'warning',
+                              'bg-red-500/20 text-red-400': systemHealth.components?.celery_beat?.status === 'error'
+                          }"
+                          x-text="(systemHealth.components?.celery_beat?.status || 'unknown').toUpperCase()">
+                    </span>
+                </div>
+                <p class="text-gray-300 text-sm mb-4" x-text="systemHealth.components?.celery_beat?.message || 'Checking...'"></p>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400">Scheduled Tasks</span>
+                        <span class="text-white font-semibold" x-text="systemHealth.tasks?.scheduled_tasks || 0"></span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400">Last Heartbeat</span>
+                        <span class="text-white font-semibold text-xs" x-text="systemHealth.components?.celery_beat?.last_heartbeat || 'Unknown'"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Redis -->
+            <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="h-10 w-10 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-white">Redis</h4>
+                    </div>
+                    <span class="px-3 py-1 rounded-lg text-xs font-semibold"
+                          :class="{
+                              'bg-green-500/20 text-green-400': systemHealth.components?.redis?.status === 'healthy',
+                              'bg-yellow-500/20 text-yellow-400': systemHealth.components?.redis?.status === 'warning',
+                              'bg-red-500/20 text-red-400': systemHealth.components?.redis?.status === 'error'
+                          }"
+                          x-text="(systemHealth.components?.redis?.status || 'unknown').toUpperCase()">
+                    </span>
+                </div>
+                <p class="text-gray-300 text-sm mb-4" x-text="systemHealth.components?.redis?.message || 'Checking...'"></p>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400">Version</span>
+                        <span class="text-white font-semibold" x-text="systemHealth.components?.redis?.version || 'unknown'"></span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400">Memory Usage</span>
+                        <span class="text-white font-semibold" x-text="systemHealth.components?.redis?.used_memory_human || 'unknown'"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database -->
+            <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="h-10 w-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-white">Database</h4>
+                    </div>
+                    <span class="px-3 py-1 rounded-lg text-xs font-semibold"
+                          :class="{
+                              'bg-green-500/20 text-green-400': systemHealth.components?.database?.status === 'healthy',
+                              'bg-yellow-500/20 text-yellow-400': systemHealth.components?.database?.status === 'warning',
+                              'bg-red-500/20 text-red-400': systemHealth.components?.database?.status === 'error'
+                          }"
+                          x-text="(systemHealth.components?.database?.status || 'unknown').toUpperCase()">
+                    </span>
+                </div>
+                <p class="text-gray-300 text-sm mb-4" x-text="systemHealth.components?.database?.message || 'Checking...'"></p>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400">Task Configurations</span>
+                        <span class="text-white font-semibold" x-text="systemHealth.components?.database?.task_configurations || 0"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

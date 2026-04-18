@@ -1,0 +1,74 @@
+<!-- Reusable Card Component -->
+{% macro card(title="", icon="", gradient="from-primary-500 to-purple-600", class="") %}
+<div class="glass-dark rounded-xl shadow-xl overflow-hidden {{ class }}">
+    {% if title %}
+    <div class="bg-gradient-to-r {{ gradient }} px-6 py-4">
+        <div class="flex items-center space-x-2">
+            {% if icon %}
+            <div class="text-white">{{ icon|safe }}</div>
+            {% endif %}
+            <h3 class="text-xl font-bold text-white">{{ title }}</h3>
+        </div>
+    </div>
+    {% endif %}
+    <div class="p-6">
+        {{ caller() }}
+    </div>
+</div>
+{% endmacro %}
+
+{% macro stat_card(title, value, icon, color="primary", change="", trend="") %}
+<div class="glass-dark rounded-xl p-6 hover:scale-105 transition-transform duration-200">
+    <div class="flex items-center justify-between">
+        <div>
+            <p class="text-sm text-gray-400 mb-1">{{ title }}</p>
+            <p class="text-3xl font-bold text-white">{{ value }}</p>
+            {% if change %}
+            <p class="text-sm mt-2 flex items-center space-x-1">
+                {% if trend == "up" %}
+                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                </svg>
+                <span class="text-green-400">{{ change }}</span>
+                {% else %}
+                <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+                <span class="text-red-400">{{ change }}</span>
+                {% endif %}
+            </p>
+            {% endif %}
+        </div>
+        <div class="w-12 h-12 bg-gradient-to-br from-{{ color }}-400 to-{{ color }}-600 rounded-lg flex items-center justify-center">
+            {{ icon|safe }}
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro button(text, type="primary", size="md", icon="", class="") %}
+{% if type == "primary" %}
+    {% set btn_class = "bg-gradient-to-r from-primary-500 to-purple-600 hover:from-primary-600 hover:to-purple-700 text-white" %}
+{% elif type == "secondary" %}
+    {% set btn_class = "bg-white/10 hover:bg-white/20 text-white border border-white/20" %}
+{% elif type == "danger" %}
+    {% set btn_class = "bg-red-500 hover:bg-red-600 text-white" %}
+{% elif type == "success" %}
+    {% set btn_class = "bg-green-500 hover:bg-green-600 text-white" %}
+{% endif %}
+
+{% if size == "sm" %}
+    {% set size_class = "px-3 py-1.5 text-sm" %}
+{% elif size == "lg" %}
+    {% set size_class = "px-6 py-3 text-lg" %}
+{% else %}
+    {% set size_class = "px-4 py-2" %}
+{% endif %}
+
+<button class="inline-flex items-center space-x-2 {{ btn_class }} {{ size_class }} rounded-lg font-medium transition-all shadow-lg hover:shadow-xl {{ class }}">
+    {% if icon %}
+    <span>{{ icon|safe }}</span>
+    {% endif %}
+    <span>{{ text }}</span>
+</button>
+{% endmacro %}

@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}{{ campaign.name }} - {{ settings.app_name }}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen py-12 px-4">
+    <div class="max-w-7xl mx-auto">
+        <div class="mb-8">
+            <a href="/campaigns" class="inline-flex items-center px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-purple-400 hover:text-purple-300 transition-all transform hover:scale-105 mb-6">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Back to Campaigns
+            </a>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 class="text-4xl font-bold text-white mb-3">{{ campaign.name }}</h1>
+                    <p class="text-lg text-gray-300">{{ campaign.description or 'No description' }}</p>
+                </div>
+                <span class="px-6 py-3 rounded-xl text-sm font-semibold shadow-lg
+                    {% if campaign.status.value == 'active' %}bg-green-500/20 text-green-400 ring-2 ring-green-500/50
+                    {% elif campaign.status.value == 'paused' %}bg-yellow-500/20 text-yellow-400 ring-2 ring-yellow-500/50
+                    {% elif campaign.status.value == 'draft' %}bg-gray-500/20 text-gray-400 ring-2 ring-gray-500/50
+                    {% else %}bg-red-500/20 text-red-400 ring-2 ring-red-500/50{% endif %}">
+                    {{ campaign.status.value.upper() }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="glass rounded-2xl p-6 hover:scale-105 transition-all shadow-lg">
+                <div class="flex items-center justify-between mb-3">
+                    <p class="text-gray-400 text-sm font-medium">Current Volume</p>
+                    <div class="h-10 w-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center">
+                        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
+                    </div>
+                </div>
+                <p class="text-4xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-2">{{ campaign.current_daily_volume }}</p>
+                <p class="text-xs text-gray-500 font-medium">emails/day</p>
+            </div>
+            <div class="glass rounded-2xl p-6 hover:scale-105 transition-all shadow-lg">
+                <div class="flex items-center justify-between mb-3">
+                    <p class="text-gray-400 text-sm font-medium">Target Volume</p>
+                    <div class="h-10 w-10 bg-gradient-to-br from-pink-500 to-purple-500 rounded-xl flex items-center justify-center">
+                        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                        </svg>
+                    </div>
+                </div>
+                <p class="text-4xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent mb-2">{{ campaign.target_daily_volume }}</p>
+                <p class="text-xs text-gray-500 font-medium">emails/day</p>
+            </div>
+            <div class="glass rounded-2xl p-6 hover:scale-105 transition-all shadow-lg">
+                <div class="flex items-center justify-between mb-3">
+                    <p class="text-gray-400 text-sm font-medium">Total Sent</p>
+                    <div class="h-10 w-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                </div>
+                <p class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-2">{{ stats.total_sent }}</p>
+                <p class="text-xs text-gray-500 font-medium">lifetime</p>
+            </div>
+            <div class="glass rounded-2xl p-6 hover:scale-105 transition-all shadow-lg">
+                <div class="flex items-center justify-between mb-3">
+                    <p class="text-gray-400 text-sm font-medium">Reply Rate</p>
+                    <div class="h-10 w-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <p class="text-4xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent mb-2">{{ (campaign.reply_rate * 100) | int }}%</p>
+                <p class="text-xs text-gray-500 font-medium">target</p>
+            </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="glass rounded-2xl p-8 mb-8 shadow-lg">
+            <div class="flex items-center mb-6">
+                <div class="h-12 w-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mr-4">
+                    <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-white">Warm-Up Progress</h2>
+                    <p class="text-sm text-gray-400">Started: {{ campaign.start_date }}</p>
+                </div>
+            </div>
+            <div class="mb-4 flex justify-between items-center">
+                <span class="text-gray-300 font-medium">Volume Ramp-Up</span>
+                <span class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">{{ [((campaign.current_daily_volume / campaign.target_daily_volume) * 100) | int, 100] | min }}%</span>
+            </div>
+            <div class="w-full bg-gray-700/50 rounded-full h-4 overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 h-4 rounded-full transition-all duration-500 shadow-lg" 
+                     style="width: {{ [((campaign.current_daily_volume / campaign.target_daily_volume) * 100), 100] | min }}%"></div>
+            </div>
+        </div>
+
+        <!-- Campaign Info -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass rounded-2xl p-8 shadow-lg">
+                <div class="flex items-center mb-6">
+                    <div class="h-12 w-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mr-4">
+                        <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">Campaign Settings</h2>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center p-4 bg-white/5 rounded-xl">
+                        <span class="text-gray-300 font-medium">AI Replies</span>
+                        <span class="px-4 py-2 rounded-lg font-semibold {{ 'bg-green-500/20 text-green-400' if campaign.use_ai_replies else 'bg-gray-500/20 text-gray-400' }}">{{ 'Enabled' if campaign.use_ai_replies else 'Disabled' }}</span>
+                    </div>
+                    <div class="flex justify-between items-center p-4 bg-white/5 rounded-xl">
+                        <span class="text-gray-300 font-medium">Start Date</span>
+                        <span class="text-white font-semibold">{{ campaign.start_date }}</span>
+                    </div>
+                    <div class="flex justify-between items-center p-4 bg-white/5 rounded-xl">
+                        <span class="text-gray-300 font-medium">Last Run</span>
+                        <span class="text-white font-semibold">{{ campaign.last_run_at.strftime('%Y-%m-%d %H:%M') if campaign.last_run_at else 'Never' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl p-8 shadow-lg">
+                <div class="flex items-center mb-6">
+                    <div class="h-12 w-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mr-4">
+                        <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">Connected Inboxes</h2>
+                </div>
+                <div class="space-y-3">
+                    {% for inbox in campaign.inboxes %}
+                    <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all">
+                        <div class="flex items-center space-x-3">
+                            <div class="h-10 w-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                                <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <span class="text-white font-medium">{{ inbox.inbox.email_address }}</span>
+                        </div>
+                        <span class="px-3 py-1.5 rounded-lg text-xs font-semibold {% if inbox.is_active %}bg-green-500/20 text-green-400{% else %}bg-gray-500/20 text-gray-400{% endif %}">
+                            {{ 'Active' if inbox.is_active else 'Inactive' }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
